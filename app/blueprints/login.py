@@ -49,10 +49,7 @@ def facebook_authorized(resp):
     if is_new_user:
         fb_data = facebook.get('/me?fields=first_name,last_name,email').data
 
-        user = User()
-        user.first_name = fb_data['first_name']
-        user.last_name = fb_data['last_name']
-        user.email = fb_data['email']
+        user = User(fb_data['first_name'], fb_data['last_name'], fb_data['email'])
         fb_user.user = user
         db.session.add(user)
         db.session.commit()

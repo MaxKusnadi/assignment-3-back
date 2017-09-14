@@ -13,6 +13,9 @@ class FBUser(db.Model):
     user = relationship('User', uselist=False, back_populates='fb_user')
     user_id = Column(Integer, ForeignKey('user.id'))
 
+    def __repr__(self):  # pragma: no cover
+        return '<{id} - {user_id}>'.format(id=self.id, user_id=self.fb_id)
+
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
@@ -23,6 +26,11 @@ class User(UserMixin, db.Model):
     email = Column(String(80))
 
     fb_user = relationship('FBUser', uselist=False, back_populates='user')
+
+    def __init__(self, first_name, last_name, email):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
 
     def is_active(self):
         """True, as all users are active."""
@@ -40,5 +48,5 @@ class User(UserMixin, db.Model):
         """False, as anonymous users aren't supported."""
         return False
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return '<User {}_{}>'.format(self.first_name, self.last_name)
