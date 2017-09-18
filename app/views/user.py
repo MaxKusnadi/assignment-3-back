@@ -50,6 +50,7 @@ class UserView(MethodView):
         self.control = UserController()
 
     def get(self):
+        logging.info("New GET /user request")
         user_id = request.args.get('user_id')
         if not user_id:
             return json.dumps(USER_ID_NOT_FOUND_400), 400

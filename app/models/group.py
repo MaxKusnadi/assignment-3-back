@@ -16,7 +16,7 @@ class Group(db.Model):
 
     creator = relationship("User", backref="groups_created")
 
-    def __init__(self, creator, name, pic_url="", description=""):
+    def __init__(self, creator, name, pic_url, description):
         self.name = name
         self.pic_url = pic_url
         self.description = description
