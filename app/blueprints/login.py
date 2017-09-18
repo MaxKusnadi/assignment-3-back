@@ -6,7 +6,7 @@ from flask_oauthlib.client import OAuth
 
 from app.models.user import FBUser, User
 from app.utils import get_or_create
-from app.constants import FACEBOOK_APP_ID, FACEBOOK_APP_SECRET
+from app.constants.facebook import FACEBOOK_APP_ID, FACEBOOK_APP_SECRET
 from app import db
 
 oauth = OAuth()
