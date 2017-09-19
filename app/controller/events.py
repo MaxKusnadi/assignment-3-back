@@ -5,7 +5,7 @@ from app.models.group import Group
 from app.models.usergroup import UserGroup
 from app.constants.error import (GROUP_NOT_FOUND_404, USER_NOT_GROUP_CREATOR_301,
                                  EVENT_NOT_FOUND_404, EVENT_NOT_FROM_THIS_GROUP_301,
-                                 START_DATE_LATER_THAN_END_DATE_400)
+                                 START_DATE_LATER_THAN_END_DATE_400, USER_NOT_IN_GROUP_301)
 from app import db
 
 
@@ -199,6 +199,15 @@ class EventController:
             e = GROUP_NOT_FOUND_404
             e['text'] = e['text'].format(group_id)
             return e, 404
+
+        # Check if the user is the member
+        user_group = UserGroup.query.filter(UserGroup.group_id == group_id,
+                                            UserGroup.user_id == user.id).first()
+        if not user_group:
+            logging.error("User of id {} is not member of group {}".format(user.id, group_id))
+            e = USER_NOT_IN_GROUP_301
+            e['text'] = e['text'].format(user_id=user.id, group_id= group_id)
+            return e, 301
 
         events = group.events
         events = list(filter(lambda x: x.is_deleted is False, events))
