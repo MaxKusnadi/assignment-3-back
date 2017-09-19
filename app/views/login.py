@@ -1,4 +1,5 @@
-from flask import render_template
+import json
+
 from flask_login import current_user
 from app.models.user import User
 from app import app, login_manager
@@ -11,6 +12,9 @@ def load_user(id):
 
 @app.route('/')
 def index():
+    d = dict()
     if type(current_user._get_current_object()) is User:
-        return 'Current User authenticated: {}'.format(current_user.first_name)
-    return render_template('index.html')
+        d['text'] = True
+        return json.dumps(d)
+    d['text'] = False
+    return json.dumps(d)
