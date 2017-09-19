@@ -28,12 +28,13 @@ class GroupController:
 
     def patch_group_info(self, user, **kwargs):
         logging.info("Creating a group for user {user_id}".format(user_id=user.id))
-        group_id = kwargs.get("group_id")
+        group_id = int(kwargs.get("group_id"))
         name = kwargs.get("name", "")
         pic_url = kwargs.get("pic_url", "")
         description = kwargs.get("description", "")
 
-        group = Group.query.filter(Group.id == group_id).first()
+        group = Group.query.filter(Group.id == group_id,
+                                   Group.is_deleted == False).first()
 
         if not group:
             e = GROUP_NOT_FOUND_404
@@ -58,6 +59,7 @@ class GroupController:
         return d, 200
 
     def get_group_info(self, group_id):
+        group_id = int(group_id)
         logging.info("Getting info for group {group_id}".format(group_id=group_id))
         group = Group.query.filter(Group.id == group_id,
                                    Group.is_deleted == False).first()
@@ -75,7 +77,7 @@ class GroupController:
         return d, 200
 
     def delete_group(self, user, **kwargs):
-        group_id = kwargs.get("group_id")
+        group_id = int(kwargs.get("group_id"))
         logging.info("Deleting group {group_id}".format(group_id=group_id))
         group = Group.query.filter(Group.id == group_id,
                                    Group.is_deleted == False).first()
@@ -103,6 +105,9 @@ class GroupController:
     def get_user_group(self, user):
         logging.info("Getting all groups for user {user_id}".format(user_id=user.id))
         groups = UserGroup.query.filter(UserGroup.user_id == user.id).all()
+        groups = list(map(lambda x: Group.query.filter(Group.id == x.group_id,
+                                                       Group.is_deleted == False).first(), groups))
+        groups = list(filter(lambda x: x, groups))
         result = list(map(lambda x:{
             "group_id": x.id,
             "name": x.name
@@ -111,7 +116,7 @@ class GroupController:
         return result, 200
 
     def join_group(self, user, **kwargs):
-        group_id = kwargs.get("group_id")
+        group_id = int(kwargs.get("group_id"))
         logging.info("User {user_id} joining group {group_id}".format(user_id=user.id,
                                                                       group_id=group_id))
         group = Group.query.filter(Group.id == group_id,
@@ -132,7 +137,7 @@ class GroupController:
         return d, 200
 
     def quit_group(self, user, **kwargs):
-        group_id = kwargs.get("group_id")
+        group_id = int(kwargs.get("group_id"))
         logging.info("User {user_id} quiting group {group_id}".format(user_id=user.id,
                                                                       group_id=group_id))
         group = Group.query.filter(Group.id == group_id,

@@ -18,7 +18,7 @@ class Event(db.Model):
 
     group = relationship("Group", backref="events")
 
-    def __init__(self, group, name, start_date, end_date, description="", location=""):
+    def __init__(self, group, name, start_date, end_date, description, location):
         self.group = group
         self.group_id = group.id
 

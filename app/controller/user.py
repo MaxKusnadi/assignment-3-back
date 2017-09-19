@@ -38,6 +38,7 @@ class UserController:
         return d, 200
 
     def get_user_info(self, user_id):
+        user_id = int(user_id)
         user = User.query.filter(User.id == user_id).first()
         if not user:
             e = USER_NOT_FOUND_404
