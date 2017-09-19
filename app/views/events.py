@@ -83,4 +83,41 @@ class EventView(MethodView):
         return json.dumps(result), status
 
 
+class MyEventView(MethodView):
+    decorators = [login_required]
+
+    def __init__(self):  # pragma: no cover
+        self.control = EventController()
+
+    def get(self):
+        logging.info("New GET /me/event request")
+
+        if type(current_user._get_current_object()) is User:
+            result, status = self.control.get_user_event(current_user)
+        else:
+            result, status = ("Not logged in", 300)
+        return json.dumps(result), status
+
+
+class GroupEventView(MethodView):
+    decorators = [login_required]
+
+    def __init__(self):  # pragma: no cover
+        self.control = EventController()
+
+    def get(self):
+        logging.info("New GET /me/event request")
+        group_id = request.args.get('group_id')
+        if not group_id:
+            return json.dumps(GROUP_ID_NOT_FOUND_400), 400
+
+        if type(current_user._get_current_object()) is User:
+            result, status = self.control.get_group_event(current_user, group_id)
+        else:
+            result, status = ("Not logged in", 300)
+        return json.dumps(result), status
+
+
 app.add_url_rule('/event', view_func=EventView.as_view('event'))
+app.add_url_rule('/me/event', view_func=MyEventView.as_view('my_event'))
+app.add_url_rule('/group/event', view_func=GroupEventView.as_view('group_event'))

@@ -2,6 +2,7 @@ import logging
 
 from app.models.event import Event
 from app.models.group import Group
+from app.models.usergroup import UserGroup
 from app.constants.error import (GROUP_NOT_FOUND_404, USER_NOT_GROUP_CREATOR_301,
                                  EVENT_NOT_FOUND_404, EVENT_NOT_FROM_THIS_GROUP_301,
                                  START_DATE_LATER_THAN_END_DATE_400)
@@ -165,3 +166,50 @@ class EventController:
         d['text'] = "Delete successful"
 
         return d, 200
+
+    def get_user_event(self, user):
+        logging.info("Getting all events for user {user_id}".format(user_id=user.id))
+        groups = UserGroup.query.filter(UserGroup.user_id == user.id).all()
+        groups = list(map(lambda x: Group.query.filter(Group.id == x.group_id,
+                                                       Group.is_deleted == False).first(), groups))
+        groups = list(filter(lambda x: x, groups))
+
+        events = []
+        for group in groups:
+            events.extend(group.events)
+
+        events = list(filter(lambda x: x.is_deleted is False, events))
+
+        result = list(map(lambda x:{
+            "event_id": x.id,
+            "name": x.name,
+            "start_date": x.start_date,
+            "end_date": x.end_date
+        }, events))
+
+        return result, 200
+
+    def get_group_event(self, user, group_id):
+        logging.info("Getting all events for group {group_id}".format(group_id=group_id))
+
+        group = Group.query.filter(Group.id == group_id,
+                                   Group.is_deleted == False).first()
+        if not group:
+            logging.error("Group of id {} is not found".format(group_id))
+            e = GROUP_NOT_FOUND_404
+            e['text'] = e['text'].format(group_id)
+            return e, 404
+
+        events = group.events
+        events = list(filter(lambda x: x.is_deleted is False, events))
+
+        result = list(map(lambda x:{
+            "event_id": x.id,
+            "name": x.name,
+            "start_date": x.start_date,
+            "end_date": x.end_date
+        }, events))
+
+        return result, 200
+
+
