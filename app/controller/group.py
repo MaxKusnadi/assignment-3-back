@@ -2,7 +2,7 @@ import logging
 
 from app.models.group import Group
 from app.models.usergroup import UserGroup
-from app.constants.error import GROUP_NOT_FOUND_404, USER_NOT_GROUP_CREATOR_301
+from app.constants.error import GROUP_NOT_FOUND_404, USER_NOT_GROUP_CREATOR_301, USER_NOT_IN_GROUP_301
 from app import db
 
 
@@ -36,10 +36,13 @@ class GroupController:
         group = Group.query.filter(Group.id == group_id).first()
 
         if not group:
-            return GROUP_NOT_FOUND_404.format(group_id), 404
+            e = GROUP_NOT_FOUND_404
+            e['text'] = e['text'].format(group_id)
+            return e, 404
         if group.creator_id != user.id:
-            return USER_NOT_GROUP_CREATOR_301.format(user_id=user.id,
-                                                     group_id=group_id), 301
+            e = USER_NOT_GROUP_CREATOR_301
+            e['text'] = e['text'].format(user_id=user.id, group_id=group_id)
+            return e, 301
 
         group.name = name if name else group.name
         group.pic_url = pic_url if pic_url else group.pic_url
@@ -60,12 +63,14 @@ class GroupController:
                                    Group.is_deleted == False).first()
         if not group:
             logging.error("Group of id {} is not found".format(group_id))
-            return GROUP_NOT_FOUND_404.format(group_id), 404
+            e = GROUP_NOT_FOUND_404
+            e['text'] = e['text'].format(group_id)
+            return e, 404
 
         d = dict()
         d['name'] = group.name
         d['pic_url'] = group.pic_url
-        d['description'] =  group.description
+        d['description'] = group.description
 
         return d, 200
 
@@ -76,13 +81,17 @@ class GroupController:
                                    Group.is_deleted == False).first()
         if not group:
             logging.error("Group of id {} is not found".format(group_id))
-            return GROUP_NOT_FOUND_404.format(group_id), 404
+            e = GROUP_NOT_FOUND_404
+            e['text'] = e['text'].format(group_id)
+            return e, 404
         if group.creator_id != user.id:
             logging.error("User {user_id} is not authorized to delete group {group_id}".format(
                 user_id=user.id, group_id=group_id
             ))
-            return USER_NOT_GROUP_CREATOR_301.format(user_id=user.id,
-                                                     group_id=group_id), 301
+            e = USER_NOT_GROUP_CREATOR_301
+            e['text'] = e['text'].format(user_id=user.id, group_id=group_id)
+            return e, 301
+
         group.is_deleted = True
         db.session.commit()
 
@@ -109,10 +118,39 @@ class GroupController:
                                    Group.is_deleted == False).first()
         if not group:
             logging.error("Group of id {} is not found".format(group_id))
-            return GROUP_NOT_FOUND_404.format(group_id), 404
+            e = GROUP_NOT_FOUND_404
+            e['text'] = e['text'].format(group_id)
+            return e, 404
 
         user_group = UserGroup(user, group)
         db.session.add(user_group)
+        db.session.commit()
+
+        d = dict()
+        d['text'] = "Delete successful"
+
+        return d, 200
+
+    def quit_group(self, user, **kwargs):
+        group_id = kwargs.get("group_id")
+        logging.info("User {user_id} quiting group {group_id}".format(user_id=user.id,
+                                                                      group_id=group_id))
+        group = Group.query.filter(Group.id == group_id,
+                                   Group.is_deleted == False).first()
+        if not group:
+            logging.error("Group of id {} is not found".format(group_id))
+            return GROUP_NOT_FOUND_404.format(group_id), 404
+
+        user_group = UserGroup.query.filter(UserGroup.group_id == group_id,
+                                            UserGroup.user_id == user.id).first()
+
+        if not user_group:
+            logging.error("User {user_id} is not in group {group_id}".format(user_id=user.id,
+                                                                             group_id=group_id))
+            e = USER_NOT_IN_GROUP_301
+            e['text'] = e['text'].format(user_id=user.id, group_id=group_id)
+            return e, 301
+        db.session.delete(user_group)
         db.session.commit()
 
         d = dict()

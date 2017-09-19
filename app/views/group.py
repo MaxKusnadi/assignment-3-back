@@ -105,5 +105,20 @@ class MyGroupView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
+    def delete(self):
+        logging.info("New DELETE /me/group request")
+        data = request.get_json()
+
+        if not data:
+            return json.dumps(JSON_NOT_FOUND_400), 400
+        if not data.get("group_id"):
+            return json.dumps(GROUP_ID_NOT_FOUND_400), 400
+
+        if type(current_user._get_current_object()) is User:
+            result, status = self.control.quit_group(current_user, **data)
+        else:
+            result, status = ("Not logged in", 300)
+        return json.dumps(result), status
+
 app.add_url_rule('/group', view_func=GroupView.as_view('group'))
 app.add_url_rule('/me/group', view_func=MyGroupView.as_view('my_group'))

@@ -40,7 +40,9 @@ class UserController:
     def get_user_info(self, user_id):
         user = User.query.filter(User.id == user_id).first()
         if not user:
-            return USER_NOT_FOUND_404.format(user_id), 404
+            e = USER_NOT_FOUND_404
+            e['text'] = e['text'].format(user_id)
+            return e, 404
 
         d = dict()
         d['first_name'] = user.first_name
