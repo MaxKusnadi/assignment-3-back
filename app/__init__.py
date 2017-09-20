@@ -13,7 +13,6 @@ app = Flask(__name__)
 CORS(app)
 app.config.from_object('config')
 login_manager = LoginManager(app)
-login_manager.login_view = 'login.get_login'
 db = SQLAlchemy(app)
 
 # Models
