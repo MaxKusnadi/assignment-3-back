@@ -31,6 +31,10 @@ START_DATE_LATER_THAN_END_DATE_400 = {
     "text": "start_date can't be later than end_date"
 }
 
+ATTENDANCE_STATUS_NOT_FOUND_400 = {
+    "text": "status is required and it must be integer"
+}
+
 # QUERY ERROR
 USER_NOT_FOUND_404 = {
     "text": "User of id {} is not found"
@@ -42,6 +46,10 @@ GROUP_NOT_FOUND_404 = {
 
 EVENT_NOT_FOUND_404 = {
     "text": "Event of id {} is not found"
+}
+
+ATTENDANCE_NOT_FOUND_404 = {
+    "text": "Attendance for user {user_id} and event {event_id} not found"
 }
 
 # AUTHORIZATION ERROR

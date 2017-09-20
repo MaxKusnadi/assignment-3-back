@@ -17,7 +17,7 @@ class Attendance(db.Model):
     user = relationship("User", backref="attendance")
     event = relationship("Event", backref="users")
 
-    def __init__(self, user, event, status=0, remark=""):
+    def __init__(self, user, event, status, remark):
         self.user = user
         self.user_id = user.id
 

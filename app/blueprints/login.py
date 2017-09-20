@@ -1,5 +1,3 @@
-import logging
-
 from flask import Blueprint, redirect, url_for, session, request
 from flask_login import login_user, logout_user, login_required
 from flask_oauthlib.client import OAuth

@@ -27,5 +27,7 @@ from app.models.attendance import Attendance
 from app.views.login import *
 from app.views.user import *
 from app.views.group import *
+from app.views.events import *
+from app.views.attendance import *
 from app.blueprints.login import login_bp
 app.register_blueprint(login_bp, url_prefix='/login')
