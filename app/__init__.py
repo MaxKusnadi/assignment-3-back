@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO,
                     format=' %(asctime)s - %(levelname)s - %(message)s')
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 app.config.from_object('config')
 login_manager = LoginManager(app)
 db = SQLAlchemy(app)
