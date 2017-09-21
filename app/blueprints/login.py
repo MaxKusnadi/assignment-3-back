@@ -32,6 +32,7 @@ def login():
 
         fb_user, is_new_user = get_or_create(db.session, FBUser, fb_id=fb_id)
 
+        user = None
         if is_new_user:
             user = User(first_name, last_name, email)
             fb_user.user = user
@@ -39,6 +40,8 @@ def login():
             db.session.commit()
         else:
             user = fb_user.user
+
+        login_user(user)
 
         return 'Logged In'
 
