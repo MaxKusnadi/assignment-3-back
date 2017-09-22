@@ -30,3 +30,7 @@ from app.views.events import *
 from app.views.attendance import *
 from app.blueprints.login import login_bp
 app.register_blueprint(login_bp, url_prefix='/login')
+
+# Scheduler
+from app.scheduler import start_scheduler
+start_scheduler()
