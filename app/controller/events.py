@@ -1,5 +1,6 @@
 import logging
 
+from app.scheduler import schedule_event_alert
 from app.models.event import Event
 from app.models.group import Group
 from app.models.usergroup import UserGroup
@@ -38,6 +39,8 @@ class EventController:
 
         db.session.add(event)
         db.session.commit()
+
+        schedule_event_alert(event)
 
         d = dict()
         d['event_id'] = event.id
@@ -98,6 +101,8 @@ class EventController:
         event.description = description if description else event.description
 
         db.session.commit()
+
+        schedule_event_alert(event)
 
         d = dict()
         d['event_id'] = event.id
