@@ -45,9 +45,13 @@ class AttendanceController:
             e['text'] = e['text'].format(user_id=user.id, group_id=group_id)
             return e, 301
 
-        attendance = Attendance(user, event, status, remark)
-        db.session.add(attendance)
-        db.session.commit()
+        attendance = Attendance.query.filter(Attendance.user_id == user.id,
+                                             Attendance.event_id == event.id).first()
+
+        if not attendance:
+            attendance = Attendance(user, event, status, remark)
+            db.session.add(attendance)
+            db.session.commit()
 
         d = dict()
         d['text'] = "Successful"

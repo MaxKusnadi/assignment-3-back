@@ -139,13 +139,16 @@ class GroupController:
             e['text'] = e['text'].format(group_id)
             return e, 404
 
-        user_group = UserGroup(user, group)
-        db.session.add(user_group)
-        db.session.commit()
+        user_group = UserGroup.query.filter(UserGroup.user_id == user.id,
+                                            UserGroup.group_id == group.id).first()
+        if not user_group:
+            user_group = UserGroup(user, group)
+            db.session.add(user_group)
+            db.session.commit()
 
         d = dict()
-        d['text'] = "Delete successful"
-
+        d['text'] = "User {user_id} joining group {group_id}".format(user_id=user.id,
+                                                                     group_id=group_id)
         return d, 200
 
     def quit_group(self, user, **kwargs):
@@ -171,6 +174,6 @@ class GroupController:
         db.session.commit()
 
         d = dict()
-        d['text'] = "Delete successful"
-
+        d['text'] = "User {user_id} quiting group {group_id}".format(user_id=user.id,
+                                                                     group_id=group_id)
         return d, 200
