@@ -19,11 +19,17 @@ class GroupController:
         db.session.add(group)
         db.session.commit()
 
+        user_group = UserGroup(user, group)
+        db.session.add(user_group)
+        db.session.commit()
+
         d = dict()
         d['group_id'] = group.id
         d['name'] = group.name
         d['pic_url'] = group.pic_url
         d['description'] = group.description
+        d['creator_id'] = group.creator_id
+
         return d, 200
 
     def patch_group_info(self, user, **kwargs):
@@ -56,6 +62,8 @@ class GroupController:
         d['name'] = group.name
         d['pic_url'] = group.pic_url
         d['description'] = group.description
+        d['creator_id'] = group.creator_id
+
         return d, 200
 
     def get_group_info(self, group_id):
@@ -73,6 +81,7 @@ class GroupController:
         d['name'] = group.name
         d['pic_url'] = group.pic_url
         d['description'] = group.description
+        d['creator_id'] = group.creator_id
 
         return d, 200
 
@@ -110,7 +119,10 @@ class GroupController:
         groups = list(filter(lambda x: x, groups))
         result = list(map(lambda x:{
             "group_id": x.id,
-            "name": x.name
+            "name": x.name,
+            "pic_url": x.pic_url,
+            "description": x.description,
+            "creator_id": x.creator_id
         }, groups))
 
         return result, 200

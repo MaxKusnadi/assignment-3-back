@@ -184,7 +184,9 @@ class EventController:
             "event_id": x.id,
             "name": x.name,
             "start_date": x.start_date,
-            "end_date": x.end_date
+            "end_date": x.end_date,
+            "description": x.description,
+            "location": x.location
         }, events))
 
         return result, 200
@@ -216,7 +218,9 @@ class EventController:
             "event_id": x.id,
             "name": x.name,
             "start_date": x.start_date,
-            "end_date": x.end_date
+            "end_date": x.end_date,
+            "description": x.description,
+            "location": x.location
         }, events))
 
         return result, 200
