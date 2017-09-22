@@ -128,8 +128,7 @@ class GroupController:
 
         return result, 200
 
-    def join_group(self, user, **kwargs):
-        group_id = int(kwargs.get("group_id"))
+    def join_group(self, user, group_id):
         logging.info("User {user_id} joining group {group_id}".format(user_id=user.id,
                                                                       group_id=group_id))
         group = Group.query.filter(Group.id == group_id,

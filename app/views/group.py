@@ -120,5 +120,26 @@ class MyGroupView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
+
+class JoinGroupView(MethodView):
+    decorators = [login_required]
+
+    def __init__(self):  # pragma: no cover
+        self.control = GroupController()
+
+    def get(self):
+        logging.info("New GET /join/group request")
+        group_id = request.args.get('group_id')
+        if not group_id:
+            return json.dumps(GROUP_ID_NOT_FOUND_400), 400
+
+        if type(current_user._get_current_object()) is User:
+            result, status = self.control.join_group(current_user, group_id)
+        else:
+            result, status = ("Not logged in", 300)
+        return json.dumps(result), status
+
+
 app.add_url_rule('/group', view_func=GroupView.as_view('group'))
 app.add_url_rule('/me/group', view_func=MyGroupView.as_view('my_group'))
+app.add_url_rule('/join/group', view_func=MyGroupView.as_view('join_group'))
