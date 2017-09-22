@@ -6,7 +6,8 @@ from app.models.group import Group
 from app.models.usergroup import UserGroup
 from app.models.user import User
 from app.constants.error import (GROUP_NOT_FOUND_404, ATTENDANCE_NOT_FOUND_404,
-                                 EVENT_NOT_FOUND_404, USER_NOT_IN_GROUP_301)
+                                 EVENT_NOT_FOUND_404, USER_NOT_IN_GROUP_301,
+                                 USER_ALREADY_TAKE_ATTENDANCE_500)
 from app import db
 
 
@@ -48,10 +49,14 @@ class AttendanceController:
         attendance = Attendance.query.filter(Attendance.user_id == user.id,
                                              Attendance.event_id == event.id).first()
 
-        if not attendance:
-            attendance = Attendance(user, event, status, remark)
-            db.session.add(attendance)
-            db.session.commit()
+        if attendance:
+            e = USER_ALREADY_TAKE_ATTENDANCE_500
+            e['text'] = e['text'].format(user.id, group_id)
+            return e, 500
+
+        attendance = Attendance(user, event, status, remark)
+        db.session.add(attendance)
+        db.session.commit()
 
         d = dict()
         d['text'] = "Successful"

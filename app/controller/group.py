@@ -2,7 +2,8 @@ import logging
 
 from app.models.group import Group
 from app.models.usergroup import UserGroup
-from app.constants.error import GROUP_NOT_FOUND_404, USER_NOT_GROUP_CREATOR_301, USER_NOT_IN_GROUP_301
+from app.constants.error import (GROUP_NOT_FOUND_404, USER_NOT_GROUP_CREATOR_301,
+                                 USER_NOT_IN_GROUP_301, USER_ALREADY_IN_GROUP_500)
 from app import db
 
 
@@ -141,10 +142,15 @@ class GroupController:
 
         user_group = UserGroup.query.filter(UserGroup.user_id == user.id,
                                             UserGroup.group_id == group.id).first()
-        if not user_group:
-            user_group = UserGroup(user, group)
-            db.session.add(user_group)
-            db.session.commit()
+        if user_group:
+            logging.error("User {} is already in group {}".format(user.id, group_id))
+            e = USER_ALREADY_IN_GROUP_500
+            e['text'] = e['text'].format(user.id, group_id)
+            return e, 500
+
+        user_group = UserGroup(user, group)
+        db.session.add(user_group)
+        db.session.commit()
 
         d = dict()
         d['text'] = "User {user_id} joining group {group_id}".format(user_id=user.id,

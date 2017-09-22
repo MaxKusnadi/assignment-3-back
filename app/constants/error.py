@@ -64,3 +64,11 @@ USER_NOT_IN_GROUP_301 = {
 EVENT_NOT_FROM_THIS_GROUP_301 = {
     "text": "Event {event_id} is not from group {group_id}"
 }
+
+USER_ALREADY_IN_GROUP_500 = {
+    "text": "User {} is already in group {}"
+}
+
+USER_ALREADY_TAKE_ATTENDANCE_500 = {
+    "text": "User {} already take attendance for event {}"
+}
