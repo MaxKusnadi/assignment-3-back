@@ -19,6 +19,7 @@ class EventController:
         end_date = int(kwargs.get("end_date"))
         location = kwargs.get("location", "")
         description = kwargs.get("description", "")
+        alert_time = int(kwargs.get("alert_time", "-1"))
 
         group = Group.query.filter(Group.id == group_id,
                                    Group.is_deleted == False).first()
@@ -34,7 +35,7 @@ class EventController:
         if start_date > end_date:
             return START_DATE_LATER_THAN_END_DATE_400, 400
 
-        event = Event(group, name, start_date, end_date, description, location)
+        event = Event(group, name, start_date, end_date, description, location, alert_time)
 
         db.session.add(event)
         db.session.commit()
@@ -46,6 +47,7 @@ class EventController:
         d['end_date'] = event.end_date
         d['description'] = event.description
         d['location'] = event.location
+        d['alert_time'] = event.alert_time
 
         return d, 200
 
@@ -58,6 +60,7 @@ class EventController:
         end_date = int(kwargs.get("end_date"))
         location = kwargs.get("location")
         description = kwargs.get("description")
+        alert_time = int(kwargs.get("alert_time"))
 
         event = Event.query.filter(Event.id == event_id,
                                    Event.is_deleted == False).first()
@@ -96,6 +99,7 @@ class EventController:
         event.end_date = end_date
         event.location = location if location else event.location
         event.description = description if description else event.description
+        event.alert_time = alert_time if alert_time else event.alert_time
 
         db.session.commit()
 
@@ -128,6 +132,7 @@ class EventController:
         d['description'] = event.description
         d['location'] = event.location
         d['group_id'] = event.group_id
+        d['alert_time'] = event.alert_time
         return d, 200
 
     def delete_event(self, user, **kwargs):
@@ -186,7 +191,8 @@ class EventController:
             "start_date": x.start_date,
             "end_date": x.end_date,
             "description": x.description,
-            "location": x.location
+            "location": x.location,
+            "alert_time": x.alert_time
         }, events))
 
         return result, 200
@@ -220,7 +226,8 @@ class EventController:
             "start_date": x.start_date,
             "end_date": x.end_date,
             "description": x.description,
-            "location": x.location
+            "location": x.location,
+            "alert_time": x.alert_time
         }, events))
 
         return result, 200

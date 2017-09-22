@@ -15,10 +15,11 @@ class Event(db.Model):
     description = Column(Text)
     location = Column(String)
     is_deleted = Column(Boolean)
+    alert_time = Column(Integer)
 
     group = relationship("Group", backref="events")
 
-    def __init__(self, group, name, start_date, end_date, description, location):
+    def __init__(self, group, name, start_date, end_date, description, location, alert_time):
         self.group = group
         self.group_id = group.id
 
@@ -28,6 +29,7 @@ class Event(db.Model):
         self.description = description
         self.location = location
         self.is_deleted = False
+        self.alert_time = alert_time
 
     def __repr__(self):
         return "{id}. Name: {name} is_deleted: {is_deleted} Group: {group_id}".format(
