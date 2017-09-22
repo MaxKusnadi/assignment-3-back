@@ -116,7 +116,7 @@ class EventController:
     def get_event_info(self, event_id):
         event_id = int(event_id)
         logging.info("Getting info for event {event_id}".format(event_id=event_id))
-        event = Group.query.filter(Event.id == event_id,
+        event = Event.query.filter(Event.id == event_id,
                                    Event.is_deleted == False).first()
         if not event:
             logging.error("Event of id {} is not found".format(event_id))
