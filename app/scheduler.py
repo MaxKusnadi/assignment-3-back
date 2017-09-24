@@ -20,7 +20,7 @@ def schedule_event_alert(event):
 
 
 def add_dummy_event():
-    print 'add dummy'
+    print('add dummy')
     scheduler.enter(1000, 1, add_dummy_event, ())
 
 
