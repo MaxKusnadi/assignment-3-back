@@ -151,7 +151,7 @@ class AttendanceController:
         result_2 = list(map(lambda x: {
             "user_id": x.id,
             "status": 0,
-            "name": x.name
+            "name": x.first_name
         }, not_respond_members))
         result.extend(result_2)
         return result, 200
