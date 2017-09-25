@@ -18,11 +18,12 @@ class EventController:
         logging.info("Creating a event for user {user_id}".format(user_id=user.id))
         group_id = int(kwargs.get('group_id'))
         name = kwargs.get('name')
-        start_date = int(kwargs.get("start_date", "0"))
-        end_date = int(kwargs.get("end_date", "0"))
+        start_date = int(kwargs.get("start_date"))
+        end_date = int(kwargs.get("end_date"))
         location = kwargs.get("location", "")
         description = kwargs.get("description", "")
-        alert_time = int(kwargs.get("alert_time", "-1"))
+        alert_time = kwargs.get("alert_time")
+        alert_time = int(alert_time) if alert_time else None
         verification_code = kwargs.get("verification_code")
 
         group = Group.query.filter(Group.id == group_id,
@@ -67,7 +68,8 @@ class EventController:
         end_date = int(kwargs.get("end_date"))
         location = kwargs.get("location")
         description = kwargs.get("description")
-        alert_time = int(kwargs.get("alert_time"))
+        alert_time = kwargs.get("alert_time")
+        alert_time = int(alert_time) if alert_time else None
         verification_code = kwargs.get('verification_code')
 
         event = Event.query.filter(Event.id == event_id,
