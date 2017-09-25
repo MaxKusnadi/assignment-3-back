@@ -2,6 +2,7 @@ import logging
 
 from app.models.group import Group
 from app.models.usergroup import UserGroup
+from app.models.user import User
 from app.constants.error import (GROUP_NOT_FOUND_404, USER_NOT_GROUP_CREATOR_301,
                                  USER_NOT_IN_GROUP_301, USER_ALREADY_IN_GROUP_500)
 from app import db
@@ -30,6 +31,7 @@ class GroupController:
         d['pic_url'] = group.pic_url
         d['description'] = group.description
         d['creator_id'] = group.creator_id
+        d['creator_fb_id'] = user.fb_user.fb_id
 
         return d, 200
 
@@ -64,6 +66,7 @@ class GroupController:
         d['pic_url'] = group.pic_url
         d['description'] = group.description
         d['creator_id'] = group.creator_id
+        d['creator_fb_id'] = user.fb_user.fb_id
 
         return d, 200
 
@@ -77,12 +80,14 @@ class GroupController:
             e = GROUP_NOT_FOUND_404
             e['text'] = e['text'].format(group_id)
             return e, 404
+        user = User.query.filter(User.id == group.creator_id).first()
 
         d = dict()
         d['name'] = group.name
         d['pic_url'] = group.pic_url
         d['description'] = group.description
         d['creator_id'] = group.creator_id
+        d['creator_fb_id'] = user.fb_user.fb_id
 
         return d, 200
 
@@ -123,7 +128,8 @@ class GroupController:
             "name": x.name,
             "pic_url": x.pic_url,
             "description": x.description,
-            "creator_id": x.creator_id
+            "creator_id": x.creator_id,
+            "creator_fb_id": User.query.filter(User.id == x.creator_id).first().fb_user.fb_id
         }, groups))
 
         return result, 200

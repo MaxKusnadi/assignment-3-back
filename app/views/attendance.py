@@ -82,5 +82,25 @@ class MyAttendanceView(MethodView):
         return json.dumps(result), status
 
 
+class GroupAttendanceView(MethodView):
+    decorators = [login_required]
+
+    def __init__(self):  # pragma: no cover
+        self.control = AttendanceController()
+
+    def get(self):
+        logging.info("New GET /group/attendance request")
+        group_id = request.args.get('group_id')
+        if not group_id:
+            return json.dumps(GROUP_ID_NOT_FOUND_400), 400
+
+        if type(current_user._get_current_object()) is User:
+            result, status = self.control.get_group_attendance_info(current_user, group_id)
+        else:
+            result, status = ("Not logged in", 300)
+        return json.dumps(result), status
+
+
 app.add_url_rule('/attendance', view_func=AttendanceView.as_view('attendance'))
-app.add_url_rule('/me/attendance', view_func=MyAttendanceView.as_view('me/attendance'))
+app.add_url_rule('/me/attendance', view_func=MyAttendanceView.as_view('me_attendance'))
+app.add_url_rule('/group/attendance', view_func=GroupAttendanceView.as_view('group_attendance'))
