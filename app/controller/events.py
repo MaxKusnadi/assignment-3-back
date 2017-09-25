@@ -3,10 +3,12 @@ import logging
 from app.scheduler import schedule_event_alert
 from app.models.event import Event
 from app.models.group import Group
+from app.models.attendance import Attendance
 from app.models.usergroup import UserGroup
 from app.constants.error import (GROUP_NOT_FOUND_404, USER_NOT_GROUP_CREATOR_301,
                                  EVENT_NOT_FOUND_404, EVENT_NOT_FROM_THIS_GROUP_301,
-                                 START_DATE_LATER_THAN_END_DATE_400, USER_NOT_IN_GROUP_301)
+                                 START_DATE_LATER_THAN_END_DATE_400, USER_NOT_IN_GROUP_301,
+                                 VERIFICATION_ERROR_301)
 from app import db
 
 
@@ -21,6 +23,7 @@ class EventController:
         location = kwargs.get("location", "")
         description = kwargs.get("description", "")
         alert_time = int(kwargs.get("alert_time", "-1"))
+        verification_code = kwargs.get("verification_code")
 
         group = Group.query.filter(Group.id == group_id,
                                    Group.is_deleted == False).first()
@@ -36,7 +39,7 @@ class EventController:
         if start_date > end_date:
             return START_DATE_LATER_THAN_END_DATE_400, 400
 
-        event = Event(group, name, start_date, end_date, description, location, alert_time)
+        event = Event(group, name, start_date, end_date, description, location, alert_time, verification_code)
 
         db.session.add(event)
         db.session.commit()
@@ -51,6 +54,7 @@ class EventController:
         d['description'] = event.description
         d['location'] = event.location
         d['alert_time'] = event.alert_time
+        d['verification_code'] = event.verification_code
 
         return d, 200
 
@@ -64,6 +68,7 @@ class EventController:
         location = kwargs.get("location")
         description = kwargs.get("description")
         alert_time = int(kwargs.get("alert_time"))
+        verification_code = kwargs.get('verification_code')
 
         event = Event.query.filter(Event.id == event_id,
                                    Event.is_deleted == False).first()
@@ -103,6 +108,7 @@ class EventController:
         event.location = location if location else event.location
         event.description = description if description else event.description
         event.alert_time = alert_time if alert_time else event.alert_time
+        event.verification_code = verification_code if verification_code else event.verification_code
 
         db.session.commit()
 
@@ -237,4 +243,54 @@ class EventController:
 
         return result, 200
 
+    def confirm_attendance(self, user, **kwargs):
+        event_id = kwargs.get("event_id")
+        verification_code = kwargs.get("verification_code")
+        logging.info("Confirming event {event_id} for user {user_id}".format(event_id=event_id,
+                                                                             user_id=user.id))
+        event = Event.query.filter(Event.id == event_id,
+                                   Event.is_deleted == False).first()
+        if not event:
+            logging.error("Event of id {} is not found".format(event_id))
+            e = EVENT_NOT_FOUND_404
+            e['text'] = e['text'].format(event_id)
+            return e, 404
 
+        group_id = event.group_id
+        group = Group.query.filter(Group.id == group_id,
+                                   Group.is_deleted == False).first()
+
+        if not group:
+            e = GROUP_NOT_FOUND_404
+            e['text'] = e['text'].format(group_id)
+            return e, 404
+
+        # Check if the user is the member
+        user_group = UserGroup.query.filter(UserGroup.group_id == group_id,
+                                            UserGroup.user_id == user.id).first()
+        if not user_group:
+            logging.error("User of id {} is not member of group {}".format(user.id, group_id))
+            e = USER_NOT_IN_GROUP_301
+            e['text'] = e['text'].format(user_id=user.id, group_id=group_id)
+            return e, 301
+
+        if verification_code != event.verification_code:
+            logging.error("Verification error for event {event_id} and user {user_id}".format(event_id=event_id,
+                                                                                              user_id=user.id))
+            e = VERIFICATION_ERROR_301
+            e['text'] = e['text'].format(event_id=event_id, user_id=user.id)
+            return e, 301
+
+        attendance = Attendance.query.filter(Attendance.user_id == user.id,
+                                             Attendance.event_id == event_id).first()
+
+        if not attendance:
+            attendance = Attendance(user, event, 3, "")
+            db.session.add(attendance)
+            db.session.commit()
+        else:
+            attendance.status = 3
+            db.session.commit()
+        d = dict()
+        d['text'] = "Successful"
+        return d, 200

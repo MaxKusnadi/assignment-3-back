@@ -35,6 +35,10 @@ ATTENDANCE_STATUS_NOT_FOUND_400 = {
     "text": "status is required and it must be integer"
 }
 
+VERIFICATION_CODE_NOT_FOUND_400 = {
+    "text": "verification_code is not found"
+}
+
 # QUERY ERROR
 USER_NOT_FOUND_404 = {
     "text": "User of id {} is not found"
@@ -63,6 +67,10 @@ USER_NOT_IN_GROUP_301 = {
 
 EVENT_NOT_FROM_THIS_GROUP_301 = {
     "text": "Event {event_id} is not from group {group_id}"
+}
+
+VERIFICATION_ERROR_301 = {
+    "text": "Verification error for event {event_id} and user {user_id}"
 }
 
 USER_ALREADY_IN_GROUP_500 = {
