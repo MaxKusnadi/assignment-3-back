@@ -286,14 +286,14 @@ class EventController:
             e = USER_NOT_IN_GROUP_301
             e['text'] = e['text'].format(user_id=user.id, group_id=group_id)
             return e, 301
-        logging.critical("Input: {}".format(verification_code))
-        logging.critical("Data: {}".format(event.verification_code))
+        # logging.critical("Input: {}".format(verification_code))
+        # logging.critical("Data: {}".format(event.verification_code))
         if verification_code != event.verification_code:
             logging.error("Verification error for event {event_id} and user {user_id}".format(event_id=event_id,
                                                                                               user_id=user.id))
             e = VERIFICATION_ERROR_301
             e['text'] = e['text'].format(event_id=event_id, user_id=user.id)
-            return e, 301
+            return e, 200
 
         attendance = Attendance.query.filter(Attendance.user_id == user.id,
                                              Attendance.event_id == event_id).first()
