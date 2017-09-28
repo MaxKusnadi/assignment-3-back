@@ -1,20 +1,6 @@
 from flask_login import UserMixin
-from sqlalchemy import BigInteger, Column, Integer, String, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy import BigInteger, Column, Integer, String, Boolean
 from app import db
-
-
-class FBUser(db.Model):
-    __tablename__ = 'fb_user'
-
-    id = Column(Integer, primary_key=True)
-    fb_id = Column(BigInteger, unique=True)
-
-    user = relationship('User', uselist=False, back_populates='fb_user')
-    user_id = Column(Integer, ForeignKey('user.id'))
-
-    def __repr__(self):  # pragma: no cover
-        return '<{id} - {user_id}>'.format(id=self.id, user_id=self.fb_id)
 
 
 class User(UserMixin, db.Model):
@@ -27,8 +13,6 @@ class User(UserMixin, db.Model):
     email = Column(String(80))
     phone = Column(String)
     is_deleted = Column(Boolean)
-
-    fb_user = relationship('FBUser', uselist=False, back_populates='user')
 
     def __init__(self, fb_id, first_name, last_name, email, phone=""):
         self.fb_id = fb_id

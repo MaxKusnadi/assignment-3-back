@@ -16,7 +16,7 @@ login_manager = LoginManager(app)
 db = SQLAlchemy(app)
 
 # Models
-from app.models.user import FBUser, User
+from app.models.user import User
 from app.models.group import Group
 from app.models.event import Event
 from app.models.usergroup import UserGroup

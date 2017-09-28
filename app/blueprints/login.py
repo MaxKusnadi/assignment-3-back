@@ -1,9 +1,9 @@
 import requests
 
-from flask import Blueprint, redirect, url_for, session, request
+from flask import Blueprint, request
 from flask_login import login_user, logout_user, login_required
 
-from app.models.user import FBUser, User
+from app.models.user import User
 from app.utils import get_or_create
 from app.constants.facebook import FACEBOOK_APP_ID, FACEBOOK_APP_SECRET
 from app import db
@@ -30,16 +30,12 @@ def login():
         last_name = args.get('last_name')
         email = args.get('email')
 
-        fb_user, is_new_user = get_or_create(db.session, FBUser, fb_id=fb_id)
+        user, is_new_user = get_or_create(db.session, User, fb_id=fb_id)
 
-        user = None
         if is_new_user:
-            user = User(first_name, last_name, email)
-            fb_user.user = user
+            user = User(fb_id, first_name, last_name, email)
             db.session.add(user)
             db.session.commit()
-        else:
-            user = fb_user.user
 
         login_user(user)
 
