@@ -47,9 +47,8 @@ class GroupView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
-    def get(self):
+    def get(self, group_id):
         logging.info("New GET /group request")
-        group_id = request.args.get('group_id')
         if not group_id:
             return json.dumps(GROUP_ID_NOT_FOUND_400), 400
 
@@ -127,9 +126,8 @@ class JoinGroupView(MethodView):
     def __init__(self):  # pragma: no cover
         self.control = GroupController()
 
-    def get(self):
+    def get(self, group_id):
         logging.info("New GET /join/group request")
-        group_id = request.args.get('group_id')
         if not group_id:
             return json.dumps(GROUP_ID_NOT_FOUND_400), 400
 
@@ -140,6 +138,7 @@ class JoinGroupView(MethodView):
         return json.dumps(result), status
 
 
-app.add_url_rule('/group', view_func=GroupView.as_view('group'))
+app.add_url_rule('/group', view_func=GroupView.as_view('group'), methods=['POST', 'PATCH', 'DELETE'])
+app.add_url_rule('/group/<int:group_id>', view_func=GroupView.as_view('group'), methods=['GET'])
 app.add_url_rule('/me/group', view_func=MyGroupView.as_view('my_group'))
-app.add_url_rule('/join/group', view_func=MyGroupView.as_view('join_group'))
+app.add_url_rule('/join/group/<int:group_id>', view_func=MyGroupView.as_view('join_group'))
