@@ -45,9 +45,8 @@ class UserView(MethodView):
     def __init__(self):  # pragma: no cover
         self.control = UserController()
 
-    def get(self):
+    def get(self, user_id):
         logging.info("New GET /user request")
-        user_id = request.args.get('user_id')
         if not user_id:
             return json.dumps(USER_ID_NOT_FOUND_400), 400
 
@@ -57,6 +56,5 @@ class UserView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
-
 app.add_url_rule('/me', view_func=MyInfoView.as_view('my_info'))
-app.add_url_rule('/user', view_func=UserView.as_view('user'))
+app.add_url_rule('/user/<int:user_id>', view_func=UserView.as_view('user'))
