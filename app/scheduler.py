@@ -20,8 +20,7 @@ def schedule_event_alert(event):
 
 
 def add_dummy_event():
-    print('add dummy')
-    scheduler.enter(1000, 1, add_dummy_event, ())
+    scheduler.enter(10000, 1, add_dummy_event, ())
 
 
 def start_scheduler():
@@ -37,16 +36,16 @@ def start_scheduler():
 
 
 def notify_attendees(event):
+
     if seconds_between_now_and(event) > 300:
+        # skip: event date modified
         return 
 
     for attendee in event.users: 
-        # if they are attending and have a phone number
-        # if attendee.status == 0 and attendee.user.phone:
-        # msg = 'Reminder: Event {} coming up.'.format(event.name)
-        # send_sms(attendee.user.phone, msg)
-        pass
-    pass
+        if attendee.status == 1 and attendee.user.phone:
+            # send attendee reminder if they are 'going' and have phone number
+            msg = 'Reminder: {} coming up.'.format(event.name)
+            send_sms(attendee.user.phone, msg)
     
 
 def send_sms(phone_number, message):
@@ -57,6 +56,6 @@ def send_sms(phone_number, message):
 
 
 def seconds_between_now_and(event):
-    alert_time = datetime.datetime.fromtimestamp(event.start_date)
+    alert_time = datetime.datetime.fromtimestamp(event.alert_time)
     now = datetime.datetime.now()
     return (alert_time - now).total_seconds()
