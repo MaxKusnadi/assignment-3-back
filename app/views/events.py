@@ -56,9 +56,8 @@ class EventView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
-    def get(self):
+    def get(self, event_id):
         logging.info("New GET /event request")
-        event_id = request.args.get('event_id')
         if not event_id:
             return json.dumps(EVENT_ID_NOT_FOUND_400), 400
 
@@ -123,9 +122,8 @@ class GroupEventView(MethodView):
     def __init__(self):  # pragma: no cover
         self.control = EventController()
 
-    def get(self):
+    def get(self, group_id):
         logging.info("New GET /me/event request")
-        group_id = request.args.get('group_id')
         if not group_id:
             return json.dumps(GROUP_ID_NOT_FOUND_400), 400
 
@@ -136,6 +134,7 @@ class GroupEventView(MethodView):
         return json.dumps(result), status
 
 
-app.add_url_rule('/event', view_func=EventView.as_view('event'))
+app.add_url_rule('/event', view_func=EventView.as_view('event'), methods=['POST', 'PATCH', 'DELETE'])
+app.add_url_rule('/event/<int:event_id>', view_func=EventView.as_view('event'), methods=['GET'])
 app.add_url_rule('/me/event', view_func=MyEventView.as_view('my_event'))
-app.add_url_rule('/group/event', view_func=GroupEventView.as_view('group_event'))
+app.add_url_rule('/group/<int:group_id>/event', view_func=GroupEventView.as_view('group_event'))
