@@ -97,8 +97,8 @@ class GroupAttendanceView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
-
-app.add_url_rule('/attendance', view_func=AttendanceView.as_view('attendance'), methods=['POST', 'PATCH'])
-app.add_url_rule('/attendance/<int:event_id>', view_func=AttendanceView.as_view('attendance'), methods=['GET'])
+attendance_view = AttendanceView.as_view('attendance')
+app.add_url_rule('/attendance', view_func=attendance_view, methods=['POST', 'PATCH'])
+app.add_url_rule('/attendance/<int:event_id>', view_func=attendance_view, methods=['GET'])
 app.add_url_rule('/me/attendance/<int:event_id>', view_func=MyAttendanceView.as_view('me_attendance'))
 app.add_url_rule('/group/<int:group_id>/attendance', view_func=GroupAttendanceView.as_view('group_attendance'))

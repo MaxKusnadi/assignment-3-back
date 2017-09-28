@@ -133,8 +133,8 @@ class GroupEventView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
-
-app.add_url_rule('/event', view_func=EventView.as_view('event'), methods=['POST', 'PATCH', 'DELETE'])
-app.add_url_rule('/event/<int:event_id>', view_func=EventView.as_view('event'), methods=['GET'])
+event_view = EventView.as_view('event')
+app.add_url_rule('/event', view_func=event_view, methods=['POST', 'PATCH', 'DELETE'])
+app.add_url_rule('/event/<int:event_id>', view_func=event_view, methods=['GET'])
 app.add_url_rule('/me/event', view_func=MyEventView.as_view('my_event'))
 app.add_url_rule('/group/<int:group_id>/event', view_func=GroupEventView.as_view('group_event'))

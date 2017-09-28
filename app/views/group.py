@@ -137,8 +137,8 @@ class JoinGroupView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
-
-app.add_url_rule('/group', view_func=GroupView.as_view('group'), methods=['POST', 'PATCH', 'DELETE'])
-app.add_url_rule('/group/<int:group_id>', view_func=GroupView.as_view('group'), methods=['GET'])
+group_view = GroupView.as_view('group')
+app.add_url_rule('/group', view_func=group_view, methods=['POST', 'PATCH', 'DELETE'])
+app.add_url_rule('/group/<int:group_id>', view_func=group_view, methods=['GET'])
 app.add_url_rule('/me/group', view_func=MyGroupView.as_view('my_group'))
 app.add_url_rule('/join/group/<int:group_id>', view_func=MyGroupView.as_view('join_group'))
