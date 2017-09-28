@@ -45,7 +45,8 @@ class EventController:
         db.session.add(event)
         db.session.commit()
 
-        schedule_event_alert(event)
+        if alert_time:
+            schedule_event_alert(event)
 
         d = dict()
         d['event_id'] = event.id
@@ -116,7 +117,8 @@ class EventController:
 
         db.session.commit()
 
-        schedule_event_alert(event)
+        if alert_time:
+            schedule_event_alert(event)
 
         d = dict()
         d['event_id'] = event.id
