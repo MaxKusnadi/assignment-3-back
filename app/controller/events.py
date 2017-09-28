@@ -267,6 +267,7 @@ class EventController:
             logging.error("Event of id {} is not found".format(event_id))
             e = EVENT_NOT_FOUND_404
             e['text'] = e['text'].format(event_id)
+            e['is_code_correct'] = False
             return e, 404
 
         group_id = event.group_id
@@ -276,6 +277,7 @@ class EventController:
         if not group:
             e = GROUP_NOT_FOUND_404
             e['text'] = e['text'].format(group_id)
+            e['is_code_correct'] = False
             return e, 404
 
         # Check if the user is the member
@@ -285,14 +287,15 @@ class EventController:
             logging.error("User of id {} is not member of group {}".format(user.id, group_id))
             e = USER_NOT_IN_GROUP_301
             e['text'] = e['text'].format(user_id=user.id, group_id=group_id)
+            e['is_code_correct'] = False
             return e, 301
-        # logging.critical("Input: {}".format(verification_code))
-        # logging.critical("Data: {}".format(event.verification_code))
+
         if verification_code != event.verification_code:
             logging.error("Verification error for event {event_id} and user {user_id}".format(event_id=event_id,
                                                                                               user_id=user.id))
             e = VERIFICATION_ERROR_301
             e['text'] = e['text'].format(event_id=event_id, user_id=user.id)
+            e['is_code_correct'] = False
             return e, 200
 
         attendance = Attendance.query.filter(Attendance.user_id == user.id,
@@ -307,4 +310,5 @@ class EventController:
             db.session.commit()
         d = dict()
         d['text'] = "Successful"
+        d['is_code_correct'] = True
         return d, 200
