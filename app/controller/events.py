@@ -64,8 +64,10 @@ class EventController:
         logging.info("Patching event {event_id} for user {user_id}".format(event_id=event_id,
                                                                            user_id=user.id))
         name = kwargs.get('name')
-        start_date = int(kwargs.get("start_date"))
-        end_date = int(kwargs.get("end_date"))
+        start_date = kwargs.get("start_date")
+        start_date = int(start_date) if start_date else None
+        end_date = kwargs.get("end_date")
+        end_date = int(end_date) if end_date else None
         location = kwargs.get("location")
         description = kwargs.get("description")
         alert_time = kwargs.get("alert_time")
