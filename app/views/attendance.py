@@ -50,9 +50,8 @@ class AttendanceView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
-    def get(self):
+    def get(self, event_id):
         logging.info("New GET /attendance request")
-        event_id = request.args.get('event_id')
         if not event_id:
             return json.dumps(EVENT_ID_NOT_FOUND_400), 400
 
@@ -69,9 +68,8 @@ class MyAttendanceView(MethodView):
     def __init__(self):  # pragma: no cover
         self.control = AttendanceController()
 
-    def get(self):
+    def get(self, event_id):
         logging.info("New GET /me/attendance request")
-        event_id = request.args.get('event_id')
         if not event_id:
             return json.dumps(EVENT_ID_NOT_FOUND_400), 400
 
@@ -88,9 +86,8 @@ class GroupAttendanceView(MethodView):
     def __init__(self):  # pragma: no cover
         self.control = AttendanceController()
 
-    def get(self):
+    def get(self, group_id):
         logging.info("New GET /group/attendance request")
-        group_id = request.args.get('group_id')
         if not group_id:
             return json.dumps(GROUP_ID_NOT_FOUND_400), 400
 
@@ -101,6 +98,7 @@ class GroupAttendanceView(MethodView):
         return json.dumps(result), status
 
 
-app.add_url_rule('/attendance', view_func=AttendanceView.as_view('attendance'))
-app.add_url_rule('/me/attendance', view_func=MyAttendanceView.as_view('me_attendance'))
-app.add_url_rule('/group/attendance', view_func=GroupAttendanceView.as_view('group_attendance'))
+app.add_url_rule('/attendance', view_func=AttendanceView.as_view('attendance'), methods=['POST', 'PATCH'])
+app.add_url_rule('/attendance/<int:event_id>', view_func=AttendanceView.as_view('attendance'), methods=['GET'])
+app.add_url_rule('/me/attendance/<int:event_id>', view_func=MyAttendanceView.as_view('me_attendance'))
+app.add_url_rule('/group/<int:group_id>/attendance', view_func=GroupAttendanceView.as_view('group_attendance'))
