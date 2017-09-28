@@ -70,7 +70,7 @@ EVENT_NOT_FROM_THIS_GROUP_301 = {
 }
 
 VERIFICATION_ERROR_301 = {
-    "text": "Verification error for event {event_id} and user {user_id}"
+    "text": "Verification error for event {event_id} and user {user_id}. Wrong verification code"
 }
 
 USER_ALREADY_IN_GROUP_500 = {
