@@ -125,10 +125,11 @@ class EventController:
         d['end_date'] = event.end_date
         d['description'] = event.description
         d['location'] = event.location
+        d['verification_code'] = event.verification_code
 
         return d, 200
 
-    def get_event_info(self, event_id):
+    def get_event_info(self, user, event_id):
         event_id = int(event_id)
         logging.info("Getting info for event {event_id}".format(event_id=event_id))
         event = Event.query.filter(Event.id == event_id,
@@ -138,7 +139,11 @@ class EventController:
             e = EVENT_NOT_FOUND_404
             e['text'] = e['text'].format(event_id)
             return e, 404
-
+        # Check if user is admin
+        group = Group.query.filter(Group.id == event.group_id).first()
+        is_user_admin = False
+        if group:
+            is_user_admin = group.creator_id == user.id
         d = dict()
         d['event_id'] = event.id
         d['name'] = event.name
@@ -148,6 +153,10 @@ class EventController:
         d['location'] = event.location
         d['group_id'] = event.group_id
         d['alert_time'] = event.alert_time
+        d['has_verification_code'] = True if event.verification_code else False
+        if is_user_admin:
+            d['verification_code'] = event.verification_code
+
         return d, 200
 
     def delete_event(self, user, **kwargs):

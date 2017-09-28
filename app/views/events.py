@@ -63,7 +63,7 @@ class EventView(MethodView):
             return json.dumps(EVENT_ID_NOT_FOUND_400), 400
 
         if type(current_user._get_current_object()) is User:
-            result, status = self.control.get_event_info(event_id)
+            result, status = self.control.get_event_info(current_user, event_id)
         else:
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
