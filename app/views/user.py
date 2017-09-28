@@ -38,10 +38,6 @@ class MyInfoView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
-    def delete(self):
-        logging.info("New DELETE /me request")
-        return ""
-
 
 class UserView(MethodView):
     decorators = [login_required]

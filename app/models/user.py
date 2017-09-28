@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from sqlalchemy import BigInteger, Column, Integer, String, Boolean
+from sqlalchemy import BigInteger, Column, Integer, String
 from app import db
 
 
@@ -12,7 +12,6 @@ class User(UserMixin, db.Model):
     last_name = Column(String(80))
     email = Column(String(80))
     phone = Column(String)
-    is_deleted = Column(Boolean)
 
     def __init__(self, fb_id, first_name, last_name, email, phone=""):
         self.fb_id = fb_id
@@ -20,7 +19,6 @@ class User(UserMixin, db.Model):
         self.last_name = last_name
         self.email = email
         self.phone = phone
-        self.is_deleted = False
 
     def is_active(self):
         """True, as all users are active."""
