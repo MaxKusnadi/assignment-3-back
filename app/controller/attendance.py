@@ -143,8 +143,9 @@ class AttendanceController:
         members_indicate = Attendance.query.filter(Attendance.event_id == event_id).all()
         result = list(map(lambda x: {
             "user_id": x.user_id,
-            "status": ATTENDANCE_STATUS.get(x.status),
-            "name": User.query.filter(User.id == x.user_id).first().first_name,
+            "status": x.status,
+            "first_name": User.query.filter(User.id == x.user_id).first().first_name,
+            "last_name": User.query.filter(User.id == x.user_id).first().last_name,
             "fb_id": User.query.filter(User.id == x.user_id).first().fb_user.fb_id
         }, members_indicate))
 
@@ -152,8 +153,9 @@ class AttendanceController:
         not_respond_members = list(filter(lambda x: x.id not in members_indicate_id, members))
         result_2 = list(map(lambda x: {
             "user_id": x.id,
-            "status": ATTENDANCE_STATUS.get(0),
-            "name": x.first_name,
+            "status": 0,
+            "first_name": x.first_name,
+            "last_name": x.last_name,
             "fb_id": x.fb_user.fb_id
         }, not_respond_members))
         result.extend(result_2)
@@ -230,6 +232,8 @@ class AttendanceController:
             not_going = list(filter(lambda x: x.status == 2, attendances))
             confirmed = list(filter(lambda x: x.status == 3, attendances))
             data['user_id'] = member.id
+            data['first_name'] = member.first_name
+            data['last_name'] = member.last_name
             data['fb_id'] = member.fb_user.fb_id
             data['no_response'] = len(no_response)
             data['going'] = len(going)
