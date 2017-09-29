@@ -255,7 +255,7 @@ class AttendanceController:
             return e, 404
 
         # Check if user is owner of the group
-        if not user.id != group.creator_id:
+        if user.id != group.creator.id:
             e = USER_NOT_GROUP_CREATOR_301
             e['text'] = e['text'].format(user_id=user.id, group_id=group_id)
             return e, 301
