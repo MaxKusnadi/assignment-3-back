@@ -32,17 +32,15 @@ class GroupView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
-    def patch(self):
+    def patch(self, group_id):
         logging.info("New PATCH /group request")
         data = request.get_json()
 
         if not data:
             return json.dumps(JSON_NOT_FOUND_400), 400
-        if not data.get("group_id"):
-            return json.dumps(GROUP_ID_NOT_FOUND_400), 400
 
         if type(current_user._get_current_object()) is User:
-            result, status = self.control.patch_group_info(current_user, **data)
+            result, status = self.control.patch_group_info(current_user, group_id, **data)
         else:
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
@@ -58,17 +56,12 @@ class GroupView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
-    def delete(self):
+    def delete(self, group_id):
         logging.info("New DELETE /group request")
         data = request.get_json()
 
-        if not data:
-            return json.dumps(JSON_NOT_FOUND_400), 400
-        if not data.get("group_id"):
-            return json.dumps(GROUP_ID_NOT_FOUND_400), 400
-
         if type(current_user._get_current_object()) is User:
-            result, status = self.control.delete_group(current_user, **data)
+            result, status = self.control.delete_group(current_user, group_id, **data)
         else:
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
@@ -138,7 +131,7 @@ class JoinGroupView(MethodView):
         return json.dumps(result), status
 
 group_view = GroupView.as_view('group')
-app.add_url_rule('/group', view_func=group_view, methods=['POST', 'PATCH', 'DELETE'])
-app.add_url_rule('/group/<int:group_id>', view_func=group_view, methods=['GET'])
+app.add_url_rule('/group', view_func=group_view, methods=['POST'])
+app.add_url_rule('/group/<int:group_id>', view_func=group_view, methods=['GET', 'PATCH', 'DELETE'])
 app.add_url_rule('/me/group', view_func=MyGroupView.as_view('my_group'))
 app.add_url_rule('/join/group/<int:group_id>', view_func=MyGroupView.as_view('join_group'))

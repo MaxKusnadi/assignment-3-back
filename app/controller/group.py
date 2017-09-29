@@ -35,9 +35,9 @@ class GroupController:
 
         return d, 200
 
-    def patch_group_info(self, user, **kwargs):
-        logging.info("Creating a group for user {user_id}".format(user_id=user.id))
-        group_id = int(kwargs.get("group_id"))
+    def patch_group_info(self, user, group_id, **kwargs):
+        logging.info("Patching group {group_id} for user {user_id}".format(group_id=group_id,
+                                                                           user_id=user.id))
         name = kwargs.get("name", "")
         pic_url = kwargs.get("pic_url", "")
         description = kwargs.get("description", "")
@@ -91,8 +91,7 @@ class GroupController:
 
         return d, 200
 
-    def delete_group(self, user, **kwargs):
-        group_id = int(kwargs.get("group_id"))
+    def delete_group(self, user, group_id):
         logging.info("Deleting group {group_id}".format(group_id=group_id))
         group = Group.query.filter(Group.id == group_id,
                                    Group.is_deleted == False).first()
