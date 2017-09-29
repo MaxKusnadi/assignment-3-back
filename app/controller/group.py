@@ -150,7 +150,7 @@ class GroupController:
             logging.error("User {} is already in group {}".format(user.id, group_id))
             e = USER_ALREADY_IN_GROUP_500
             e['text'] = e['text'].format(user.id, group_id)
-            return e, 500
+            return e, 200
 
         user_group = UserGroup(user, group)
         db.session.add(user_group)
