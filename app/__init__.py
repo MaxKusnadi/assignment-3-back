@@ -28,8 +28,8 @@ from app.views.user import *
 from app.views.group import *
 from app.views.events import *
 from app.views.attendance import *
-from app.blueprints.login import login_bp
-app.register_blueprint(login_bp, url_prefix='/login')
+from app.blueprints.login import auth_bp
+app.register_blueprint(auth_bp, url_prefix='/auth')
 
 # Scheduler
 from app.scheduler import start_scheduler
