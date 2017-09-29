@@ -22,13 +22,14 @@ def login():
     if not fb_app_access_token:
         generate_fb_app_access_token()
 
-    fb_user_access_token = request.args.get('user_access_token')
+    data = request.get_json()
+
+    fb_user_access_token = data.get('user_access_token')
     if valid_fb_user_access_token(fb_user_access_token):
-        args = request.args
-        fb_id = args.get('fb_id')
-        first_name = args.get('first_name')
-        last_name = args.get('last_name')
-        email = args.get('email')
+        fb_id = data.get('fb_id')
+        first_name = data.get('first_name')
+        last_name = data.get('last_name')
+        email = data.get('email')
 
         user, is_new_user = get_or_create(db.session, User, fb_id=fb_id)
 
