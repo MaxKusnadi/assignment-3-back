@@ -8,14 +8,14 @@ from app.utils import get_or_create
 from app.constants.facebook import FACEBOOK_APP_ID, FACEBOOK_APP_SECRET
 from app import db
 
-login_bp = Blueprint('login', __name__)
+auth_bp = Blueprint('auth', __name__)
 
 
 fb_base_url = 'https://graph.facebook.com/'
 fb_app_access_token = None
 
 
-@login_bp.route('/')
+@auth_bp.route('/login', methods=['POST'])
 def login():
 
     # get app_access_token if we haven't already
@@ -41,10 +41,10 @@ def login():
 
         return 'Logged In'
 
-    return 'BAD', 500
+    return 'Error Logging In', 500
 
 
-@login_bp.route('/logout')
+@auth_bp.route('/logout', methods=['POST'])
 @login_required
 def logout():
     logout_user()
