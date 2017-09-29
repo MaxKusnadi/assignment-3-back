@@ -223,10 +223,13 @@ class AttendanceController:
 
         all_members = UserGroup.query.filter(UserGroup.group_id == group_id).all()
         all_members = map(lambda x: User.query.filter(User.id == x.user_id).first(), all_members)
+        all_events = Event.query.filter(Event.group_id == group_id).all()
+        all_events_id = list(map(lambda x: x.id, all_events))
         result = []
         for member in all_members:
             # Getting all attendance for a member
             attendances = Attendance.query.filter(Attendance.user_id == member.id).all()
+            attendances = list(filter(lambda x: x.event_id in all_events_id, attendances))
             data = dict()
             no_response = list(filter(lambda x: x.status == 0, attendances))
             going = list(filter(lambda x: x.status == 1, attendances))
