@@ -4,5 +4,4 @@ def get_or_create(session, model, **kwargs):
     if instance:
         return instance, False
     else:
-        instance = model(**kwargs)
         return instance, True
