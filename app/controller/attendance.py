@@ -63,9 +63,9 @@ class AttendanceController:
         d['text'] = "Successful"
         return d, 200
 
-    def patch_attendance(self, user, **kwargs):
-        logging.info("Patching an attendance for user {user_id}".format(user_id=user.id))
-        event_id = int(kwargs.get('event_id'))
+    def patch_attendance(self, user, event_id, **kwargs):
+        logging.info("Patching an attendance for event {event_id} for user {user_id}".format(event_id=event_id,
+                                                                                             user_id=user.id))
         status = int(kwargs.get('status'))
         remark = kwargs.get('remark')
 

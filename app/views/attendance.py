@@ -35,17 +35,15 @@ class AttendanceView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
-    def patch(self):
+    def patch(self, event_id):
         logging.info("New PATCH /attendance request")
         data = request.get_json()
 
         if not data:
             return json.dumps(JSON_NOT_FOUND_400), 400
-        if not data.get("event_id"):
-            return json.dumps(EVENT_ID_NOT_FOUND_400), 400
 
         if type(current_user._get_current_object()) is User:
-            result, status = self.control.patch_attendance(current_user, **data)
+            result, status = self.control.patch_attendance(current_user, event_id, **data)
         else:
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
@@ -98,7 +96,7 @@ class GroupAttendanceView(MethodView):
         return json.dumps(result), status
 
 attendance_view = AttendanceView.as_view('attendance')
-app.add_url_rule('/attendance', view_func=attendance_view, methods=['POST', 'PATCH'])
-app.add_url_rule('/attendance/<int:event_id>', view_func=attendance_view, methods=['GET'])
+app.add_url_rule('/attendance', view_func=attendance_view, methods=['POST'])
+app.add_url_rule('/attendance/<int:event_id>', view_func=attendance_view, methods=['GET', 'PATCH'])
 app.add_url_rule('/me/attendance/<int:event_id>', view_func=MyAttendanceView.as_view('me_attendance'))
 app.add_url_rule('/group/<int:group_id>/attendance', view_func=GroupAttendanceView.as_view('group_attendance'))
