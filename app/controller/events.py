@@ -160,8 +160,7 @@ class EventController:
 
         return d, 200
 
-    def delete_event(self, user, **kwargs):
-        event_id = int(kwargs.get("event_id"))
+    def delete_event(self, user, event_id):
         logging.info("Deleting event {event_id}".format(event_id=event_id))
         event = Event.query.filter(Event.id == event_id,
                                    Event.is_deleted == False).first()

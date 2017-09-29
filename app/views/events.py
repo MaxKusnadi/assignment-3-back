@@ -67,10 +67,9 @@ class EventView(MethodView):
 
     def delete(self, event_id):
         logging.info("New DELETE /event request")
-        data = request.get_json()
 
         if type(current_user._get_current_object()) is User:
-            result, status = self.control.delete_event(current_user, event_id, **data)
+            result, status = self.control.delete_event(current_user, event_id)
         else:
             result, status = ("Not logged in", 300)
         return json.dumps(result), status

@@ -58,7 +58,6 @@ class GroupView(MethodView):
 
     def delete(self, group_id):
         logging.info("New DELETE /group request")
-        data = request.get_json()
 
         if type(current_user._get_current_object()) is User:
             result, status = self.control.delete_group(current_user, group_id)
