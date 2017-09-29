@@ -60,8 +60,7 @@ class EventController:
 
         return d, 200
 
-    def patch_event_info(self, user, **kwargs):
-        event_id = int(kwargs.get('event_id'))
+    def patch_event_info(self, user, event_id, **kwargs):
         logging.info("Patching event {event_id} for user {user_id}".format(event_id=event_id,
                                                                            user_id=user.id))
         name = kwargs.get('name')

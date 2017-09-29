@@ -41,17 +41,15 @@ class EventView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
-    def patch(self):
+    def patch(self, event_id):
         logging.info("New PATCH /event request")
         data = request.get_json()
 
         if not data:
             return json.dumps(JSON_NOT_FOUND_400), 400
-        if not data.get("event_id"):
-            return json.dumps(EVENT_ID_NOT_FOUND_400), 400
 
         if type(current_user._get_current_object()) is User:
-            result, status = self.control.patch_event_info(current_user, **data)
+            result, status = self.control.patch_event_info(current_user, event_id, **data)
         else:
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
@@ -67,17 +65,12 @@ class EventView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
-    def delete(self):
+    def delete(self, event_id):
         logging.info("New DELETE /event request")
         data = request.get_json()
 
-        if not data:
-            return json.dumps(JSON_NOT_FOUND_400), 400
-        if not data.get("event_id"):
-            return json.dumps(EVENT_ID_NOT_FOUND_400), 400
-
         if type(current_user._get_current_object()) is User:
-            result, status = self.control.delete_event(current_user, **data)
+            result, status = self.control.delete_event(current_user, event_id, **data)
         else:
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
@@ -134,7 +127,7 @@ class GroupEventView(MethodView):
         return json.dumps(result), status
 
 event_view = EventView.as_view('event')
-app.add_url_rule('/event', view_func=event_view, methods=['POST', 'PATCH', 'DELETE'])
-app.add_url_rule('/event/<int:event_id>', view_func=event_view, methods=['GET'])
+app.add_url_rule('/event', view_func=event_view, methods=['POST'])
+app.add_url_rule('/event/<int:event_id>', view_func=event_view, methods=['GET', 'PATCH', 'DELETE'])
 app.add_url_rule('/me/event', view_func=MyEventView.as_view('my_event'))
 app.add_url_rule('/group/<int:group_id>/event', view_func=GroupEventView.as_view('group_event'))
