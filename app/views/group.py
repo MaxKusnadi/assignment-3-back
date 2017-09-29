@@ -61,7 +61,7 @@ class GroupView(MethodView):
         data = request.get_json()
 
         if type(current_user._get_current_object()) is User:
-            result, status = self.control.delete_group(current_user, group_id, **data)
+            result, status = self.control.delete_group(current_user, group_id)
         else:
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
