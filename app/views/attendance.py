@@ -2,7 +2,7 @@ import logging
 import json
 
 from flask.views import MethodView
-from flask import request
+from flask import request, Response
 from flask_login import current_user, login_required
 
 from app import app
@@ -95,8 +95,36 @@ class GroupAttendanceView(MethodView):
             result, status = ("Not logged in", 300)
         return json.dumps(result), status
 
+
+class DownloadGroupView(MethodView):
+    decorators = [login_required]
+
+    def __init__(self):
+        self.control = AttendanceController()
+
+    def get(self, group_id):
+        logging.info("New GET /group/download request")
+
+        if not group_id:
+            return json.dumps(GROUP_ID_NOT_FOUND_400), 400
+
+        if type(current_user._get_current_object()) is User:
+            result, status = self.control.get_group_attendance_csv(current_user, group_id)
+        else:
+            result, status = ("Not logged in", 300)
+            return json.dumps(result), status
+
+        if status == 200:
+            return Response(
+                result,
+                mimetype="text/csv",
+                headers={"Content-disposition": "attachment; filename=attendance_group_{}.csv".format(group_id)})
+        return json.dumps(result), status
+
+
 attendance_view = AttendanceView.as_view('attendance')
 app.add_url_rule('/attendance', view_func=attendance_view, methods=['POST'])
 app.add_url_rule('/attendance/<int:event_id>', view_func=attendance_view, methods=['GET', 'PATCH'])
 app.add_url_rule('/me/attendance/<int:event_id>', view_func=MyAttendanceView.as_view('me_attendance'))
 app.add_url_rule('/group/<int:group_id>/attendance', view_func=GroupAttendanceView.as_view('group_attendance'))
+app.add_url_rule('/group/<int:group_id>/download', view_func=DownloadGroupView.as_view('download_group'))
