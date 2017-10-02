@@ -13,7 +13,7 @@ class UserController:
         d['first_name'] = user.first_name
         d['last_name'] = user.last_name
         d['email'] = user.email
-        d['fb_id'] = user.fb_id
+        d['fb_id'] = str(user.fb_id)
         d['phone'] = user.phone
 
         return d, 200
@@ -36,7 +36,7 @@ class UserController:
         d['first_name'] = user.first_name
         d['last_name'] = user.last_name
         d['email'] = user.email
-        d['fb_id'] = user.fb_id
+        d['fb_id'] = str(user.fb_id)
         d['phone'] = phone
 
         return d, 200
@@ -53,7 +53,7 @@ class UserController:
         d['first_name'] = user.first_name
         d['last_name'] = user.last_name
         d['email'] = user.email
-        d['fb_id'] = user.fb_id
+        d['fb_id'] = str(user.fb_id)
         d['phone'] = user.phone
 
         return d, 200

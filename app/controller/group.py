@@ -31,7 +31,7 @@ class GroupController:
         d['pic_url'] = group.pic_url
         d['description'] = group.description
         d['creator_id'] = group.creator_id
-        d['creator_fb_id'] = user.fb_id
+        d['creator_fb_id'] = str(user.fb_id)
 
         return d, 200
 
@@ -66,7 +66,7 @@ class GroupController:
         d['pic_url'] = group.pic_url
         d['description'] = group.description
         d['creator_id'] = group.creator_id
-        d['creator_fb_id'] = user.fb_id
+        d['creator_fb_id'] = str(user.fb_id)
 
         return d, 200
 
@@ -87,7 +87,7 @@ class GroupController:
         d['pic_url'] = group.pic_url
         d['description'] = group.description
         d['creator_id'] = group.creator_id
-        d['creator_fb_id'] = user.fb_id
+        d['creator_fb_id'] = str(user.fb_id)
 
         return d, 200
 
@@ -128,7 +128,7 @@ class GroupController:
             "pic_url": x.pic_url,
             "description": x.description,
             "creator_id": x.creator_id,
-            "creator_fb_id": User.query.filter(User.id == x.creator_id).first().fb_id
+            "creator_fb_id": str(User.query.filter(User.id == x.creator_id).first().fb_id)
         }, groups))
 
         return result, 200

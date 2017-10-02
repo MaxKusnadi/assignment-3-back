@@ -147,7 +147,7 @@ class AttendanceController:
             "status": x.status,
             "first_name": User.query.filter(User.id == x.user_id).first().first_name,
             "last_name": User.query.filter(User.id == x.user_id).first().last_name,
-            "fb_id": User.query.filter(User.id == x.user_id).first().fb_id
+            "fb_id": str(User.query.filter(User.id == x.user_id).first().fb_id)
         }, members_indicate))
 
         members_indicate_id = list(map(lambda x: x.user_id, members_indicate))
@@ -157,7 +157,7 @@ class AttendanceController:
             "status": 0,
             "first_name": x.first_name,
             "last_name": x.last_name,
-            "fb_id": x.fb_id
+            "fb_id": str(x.fb_id)
         }, not_respond_members))
         result.extend(result_2)
         return result, 200
@@ -238,7 +238,7 @@ class AttendanceController:
             data['user_id'] = member.id
             data['first_name'] = member.first_name
             data['last_name'] = member.last_name
-            data['fb_id'] = member.fb_id
+            data['fb_id'] = str(member.fb_id)
             data['no_response'] = len(no_response)
             data['going'] = len(going)
             data['not_going'] = len(not_going)
