@@ -48,6 +48,10 @@ class EventController:
         if alert_time:
             schedule_event_alert(event)
 
+        attendance = Attendance(user, event, 1, "")
+        db.session.add(attendance)
+        db.session.commit()
+
         d = dict()
         d['event_id'] = event.id
         d['name'] = event.name
@@ -118,6 +122,12 @@ class EventController:
 
         if alert_time:
             schedule_event_alert(event)
+
+        if verification_code:
+            attendance = Attendance.query.filter(Attendance.user_id == user.id,
+                                                 Attendance.event_id == event_id).first()
+            attendance.status = 3
+            db.session.commit()
 
         d = dict()
         d['event_id'] = event.id

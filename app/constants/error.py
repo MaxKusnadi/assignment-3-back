@@ -1,4 +1,7 @@
 # INPUT ERROR
+GROUP_NAME_TOO_LONG_500 = {
+    "text": "Group name is more than 25 characters. Please limit to 25"
+}
 JSON_NOT_FOUND_400 = {
     "text": "JSON is required."
 }

@@ -273,7 +273,7 @@ class AttendanceController:
         result = ["Name"]
         # Iterating all events
         for event in all_events:
-            event_time = time.strftime('%d/%m/%Y %H:%M:%S', time.localtime(event.start_date))
+            event_time = time.strftime('%d/%m/%Y', time.localtime(event.start_date))
             event_name = ",{} - {}".format(event.name, event_time)
             result.append(event_name)
         result.append("\n")

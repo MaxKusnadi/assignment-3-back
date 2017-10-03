@@ -4,7 +4,8 @@ from app.models.group import Group
 from app.models.usergroup import UserGroup
 from app.models.user import User
 from app.constants.error import (GROUP_NOT_FOUND_404, USER_NOT_GROUP_CREATOR_301,
-                                 USER_NOT_IN_GROUP_301, USER_ALREADY_IN_GROUP_500)
+                                 USER_NOT_IN_GROUP_301, USER_ALREADY_IN_GROUP_500,
+                                 GROUP_NAME_TOO_LONG_500)
 from app import db
 
 
@@ -13,6 +14,9 @@ class GroupController:
     def create_new_group(self, user, **kwargs):
         logging.info("Creating a group for user {user_id}".format(user_id=user.id))
         name = kwargs.get("name")
+        if len(name) > 25:
+            e = GROUP_NAME_TOO_LONG_500
+            return e, 500
         pic_url = kwargs.get("pic_url", "")
         description = kwargs.get("description", "")
 
@@ -39,6 +43,10 @@ class GroupController:
         logging.info("Patching group {group_id} for user {user_id}".format(group_id=group_id,
                                                                            user_id=user.id))
         name = kwargs.get("name", "")
+        if name:
+            if len(name) > 25:
+                e = GROUP_NAME_TOO_LONG_500
+                return e, 500
         pic_url = kwargs.get("pic_url", "")
         description = kwargs.get("description", "")
 
